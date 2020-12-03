@@ -37,8 +37,8 @@ There is a bunch options to start with. I recommend checking [nvidia's suggestio
 [Notebook](autopilot_data_collection.ipynb)
 <br>
 <br>
-With the above notebook you can control jetson using a gamepad. The main goal of this stage is to gather data reflecting correct driving, i.e images with correctly annotated steering and throttle values.
-While driving, you can record camera framea and corresponding steering and throttle values. An example piece of data may look as follows:
+The main goal of this stage is to gather data reflecting correct driving, i.e images with correctly annotated steering and throttle values.
+While driving with gamepad, you can record camera frames and corresponding steering and throttle values. An example piece of data may look as follows:
 <br>
 <img src="assets/5178962045858.jpg">
 <br>
@@ -46,7 +46,7 @@ While driving, you can record camera framea and corresponding steering and throt
 
 Where the first value is steering value and the second one is a throttle value. Both of them range from -1.0 to 1.0.
 
-I recommend collecting at least 20k of samples.
+I recommend collecting at least 20k of samples, but usually the more the merrier.
 
 ### 2. Training
 
@@ -62,7 +62,7 @@ Training process consists of iterating over previously gathered datasets and fee
 [Notebook](autopilot_testing.ipynb)
 <br>
 <br>
-Finally, with the trained model we can test our jetson on track. With relatively lightweight resnet18 CNN jetson operates at ~30 FPS and successfully drives the track in both directions. 
+Finally, with the trained model we can test our jetson on the track. With relatively lightweight resnet18 CNN, jetson operates at ~30 FPS and successfully drives the track in both directions. 
 
 <img src="assets/loop_ccw_small.gif" width=500>
 <img src="assets/loop_cw_small.gif" width=500>
