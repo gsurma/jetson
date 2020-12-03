@@ -38,13 +38,13 @@ There is a bunch options to start with. I recommend checking [nvidia's suggestio
 <br>
 <br>
 The main goal of this stage is to gather data reflecting correct driving, i.e images with correctly annotated steering and throttle values.
-While driving with gamepad, you can record camera frames and corresponding steering and throttle values. An example piece of data may look as follows:
+While driving with gamepad, you can record camera frames and save corresponding steering and throttle values. An example piece of data may look as follows:
 <br>
 <img src="assets/5178962045858.jpg">
 <br>
 [0.3, 0.5]
 
-Where the first value is steering value and the second one is a throttle value. Both of them range from -1.0 to 1.0.
+Where the first value is a steering value and the second one is a throttle value. Both of them range from -1.0 to 1.0.
 
 I recommend collecting at least 20k of samples, but usually the more the merrier.
 
@@ -62,7 +62,7 @@ Training process consists of iterating over previously gathered datasets and fee
 [Notebook](autopilot_testing.ipynb)
 <br>
 <br>
-Finally, with the trained model we can test our jetson on the track. With relatively lightweight resnet18 CNN, jetson operates at ~30 FPS and successfully drives the track in both directions. 
+Finally, with the trained model we can test our jetson on the track. With relatively lightweight resnet18 CNN, Jetson operates at ~30 FPS and successfully drives the track in both directions. Moreover, it does so without being explicitly instructed to follow lanes. Jetson learned it implicitly with the end-to-end system.
 
 <img src="assets/loop_ccw_small.gif" width=500>
 <img src="assets/loop_cw_small.gif" width=500>
