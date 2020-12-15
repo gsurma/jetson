@@ -7,24 +7,28 @@ import torch.utils.data
 import cv2
 import numpy as np
 
+from autopilot_utils import center_crop_square
+
 class AutopilotDataset(torch.utils.data.Dataset):
     
-    def __init__(self, directory, transform=None, random_noise=False, random_blur=False, random_hflip=False):
+    def __init__(self, directory, frame_size, transform=None, random_noise=False, random_blur=False, random_horizontal_flip=False):
         super(AutopilotDataset, self).__init__()
         
+        self.frame_size = frame_size
         self.transform = transform
         self.random_noise = random_noise
         self.random_blur = random_blur
-        self.random_hflip = random_hflip
-    
+        self.random_horizontal_flip = random_horizontal_flip
+        
         self.data = []
 
         with open(directory + "annotations.csv", 'r') as annotations:
             for line in annotations:
                 timestamp, steering, throttle = line.split(",")
                 image = directory+timestamp+'.jpg'
-                if os.path.isfile(image):
+                if os.path.isfile(image) and os.stat(image).st_size > 0:
                     self.data.append((image, steering, throttle))
+                    
             annotations.close()
         print("Generated dataset of " + str(len(self.data)) + " items")
           
@@ -36,7 +40,10 @@ class AutopilotDataset(torch.utils.data.Dataset):
         
         image, steering, throttle = item
         image = cv2.imread(image, cv2.IMREAD_COLOR)
+        image = center_crop_square(image)
+        image = cv2.resize(image, (self.frame_size, self.frame_size))
         image = PIL.Image.fromarray(image)
+        
         steering = float(steering)
         throttle = float(throttle)
         
@@ -58,7 +65,7 @@ class AutopilotDataset(torch.utils.data.Dataset):
             
             image = PIL.Image.fromarray(output)
         
-        if self.random_hflip and float(np.random.random(1)) > 0.5:
+        if self.random_horizontal_flip and float(np.random.random(1)) > 0.5:
             image = image.transpose(PIL.Image.FLIP_LEFT_RIGHT)
             steering = -steering
             
