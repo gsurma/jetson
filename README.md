@@ -76,14 +76,14 @@ Or taking appropriate crossroads turns.
 ___
 
 
-I recommend collecting at least 20k of samples, but usually the more the merrier.
+I recommend collecting at least 20k of samples, but usually the more the merrier. Jetson was trained on ~60k and validated on ~20k.
 
 ### 2. Training
 
 [Notebook](autopilot_training.ipynb)
 <br>
 <br>
-Training process consists of iterating over previously gathered datasets and feeding them into the CNN. I recommend offloading data from Jetson Nano and performing training on the GPU as the process might be heavy on the resources.
+Training process consists of iterating over previously gathered datasets and feeding them into the CNN. I recommend offloading data from Jetson Nano and performing training on the GPU as the process might be heavy on the resources and take multiple hours/days.
 
 CNN network is built of the resnet18 backbone and a stack of dropout and fully connected layers.
 
@@ -104,7 +104,7 @@ CNN network is built of the resnet18 backbone and a stack of dropout and fully c
 [Python script](autopilot_testing.py)
 <br>
 <br>
-Finally, with the trained model we can test our jetson on the track. With the relatively lightweight CNN, jetson operates at ~30 FPS, successfully drives the track in both directions and correctly stops at the end of the road.
+Finally, with the trained model we can test Jetson on the track. With the relatively lightweight CNN, Jetson operates at ~30 FPS, successfully drives the track in both directions and correctly stops at the end of the road.
 
 <img src="assets/topdown1.gif" width=500>
 <img src="assets/topdown2.gif" width=500>
@@ -117,7 +117,7 @@ And takes correct crossroads turns.
 <img src="assets/crossroads_right.gif" width=500>
 
 #### Performance Tips
-* make sure that your compute unit operates at max performance, for jetson nano run `sudo nvpmodel -m 0 && sudo jetson_clocks
+* make sure that your compute unit operates at the max performance, for jetson nano run `sudo nvpmodel -m 0 && sudo jetson_clocks
 `
 * don't run the control loop from the jupyter notebook, use a python script to lower latency
 * limit the number of operations performed in the control loop
