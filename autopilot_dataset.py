@@ -1,4 +1,5 @@
 import torch
+import torchvision
 import os
 import glob
 import PIL.Image
@@ -11,7 +12,14 @@ from autopilot_utils import center_crop_square
 
 class AutopilotDataset(torch.utils.data.Dataset):
     
-    def __init__(self, directory, frame_size, transform=None, random_noise=False, random_blur=False, random_horizontal_flip=False):
+    def __init__(self, directory,
+                 frame_size, 
+                 transform=None,
+                 random_noise=False,
+                 random_blur=False,
+                 random_horizontal_flip=False,
+                 random_color_jitter=False,
+                 keep_images_in_ram=False): # requires lots of RAM but significantly speeds up IO, otherwise stores image paths
         super(AutopilotDataset, self).__init__()
         
         self.frame_size = frame_size
@@ -19,15 +27,19 @@ class AutopilotDataset(torch.utils.data.Dataset):
         self.random_noise = random_noise
         self.random_blur = random_blur
         self.random_horizontal_flip = random_horizontal_flip
+        self.random_color_jitter = random_color_jitter
+        self.keep_images_in_ram = keep_images_in_ram
         
         self.data = []
 
         with open(directory + "annotations.csv", 'r') as annotations:
             for line in annotations:
-                timestamp, steering, throttle = line.split(",")
-                image = directory+timestamp+'.jpg'
+                name, steering, throttle = line.split(",")
+                image = directory+name+'.jpg'
                 if os.path.isfile(image) and os.stat(image).st_size > 0:
-                    self.data.append((image, steering, throttle))
+                    if self.keep_images_in_ram:
+                        image = self.load_and_prepare_image_from_path(image)
+                    self.data.append((name, image, steering, throttle))
                     
             annotations.close()
         print("Generated dataset of " + str(len(self.data)) + " items")
@@ -38,11 +50,9 @@ class AutopilotDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         item = self.data[idx]
         
-        image, steering, throttle = item
-        image = cv2.imread(image, cv2.IMREAD_COLOR)
-        image = center_crop_square(image)
-        image = cv2.resize(image, (self.frame_size, self.frame_size))
-        image = PIL.Image.fromarray(image)
+        name, image, steering, throttle = item
+        if not self.keep_images_in_ram:
+            image = self.load_and_prepare_image_from_path(image)
         
         steering = float(steering)
         throttle = float(throttle)
@@ -69,7 +79,23 @@ class AutopilotDataset(torch.utils.data.Dataset):
             image = image.transpose(PIL.Image.FLIP_LEFT_RIGHT)
             steering = -steering
             
-        if self.transform is not None:
-            image = self.transform(image)
+        transforms = []
+        if self.random_color_jitter:
+            transforms = [torchvision.transforms.ColorJitter(brightness=0.25, contrast=0.25, hue=0.25, saturation=0.25)]
             
-        return image, torch.Tensor([steering, throttle])
+        transforms += [
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])]
+                                             
+        composed_transforms = torchvision.transforms.Compose(transforms)
+        image = composed_transforms(image)
+        
+        return name, image, torch.Tensor([steering, throttle])
+
+    def load_and_prepare_image_from_path(self, path):
+        image = cv2.imread(path, cv2.IMREAD_COLOR)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = center_crop_square(image)
+        image = cv2.resize(image, (self.frame_size, self.frame_size))
+        image = PIL.Image.fromarray(image)
+        return image

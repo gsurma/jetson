@@ -12,8 +12,9 @@ from torch2trt import TRTModule
 from autopilot_utils import preprocess_image, center_crop_square
 from autopilot_model import AutopilotModel
 
-MODELS_DIR = "/home/greg/models/"
-NAME = "3_2_resnet18"
+# TODO: set your paths
+MODELS_DIR = ""
+NAME = ""
 MODEL_PATH = MODELS_DIR + NAME + ".pth"
 MODEL_PATH_TRT = MODELS_DIR + NAME + "_trt.pth"
 
