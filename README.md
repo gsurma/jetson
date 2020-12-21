@@ -13,21 +13,22 @@ Check the corresponding Medium article:
 ## Capabilities
 
 <img src="assets/pov2.gif" width=224>
+<br>
 Path following
-
-___
-
+<br>
+<br>
 <img src="assets/stopping.gif" width=224>
+<br>
 Stopping
-
-___
-
+<br>
+<br>
 <img src="assets/crossroads_left.gif" width=224>
+<br>
 Crossroads left turn
-
-___
-
+<br>
+<br>
 <img src="assets/crossroads_right.gif" width=224>
+<br>
 Crossroads right turn
 <br>
 <br>
@@ -105,6 +106,12 @@ CNN network is built of the resnet18 backbone and a stack of dropout and fully c
     )
 
 <img src="assets/training_progress.jpg">
+
+Finally, we can test the model against the test set before we proceed to the real-world testing.
+<br>
+<img src="assets/test_example.png" width=300>
+<br>
+etc.
 
 
 ### 3. Testing
