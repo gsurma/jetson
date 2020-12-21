@@ -4,9 +4,26 @@
 
 # Jetson
 
-Jetson is a self-driving toy car project. It contains an end-to-end CNN system build in PyTorch.
+Jetson is a self-driving toy car project. It contains an end-to-end CNN vision system build in PyTorch.
 
-<img src="assets/pov.gif">
+## Capabilities
+
+<img src="assets/pov2.gif" width=224>
+<br>
+Path following
+
+<img src="assets/stopping.gif" width=224>
+<br>
+Stopping
+
+<img src="assets/crossroads_left.gif" width=224>
+<br>
+Crossroads left turn
+
+<img src="assets/crossroads_right.gif" width=224>
+<br>
+Crossroads right turn
+
 
 ## Hardware
 
@@ -14,11 +31,12 @@ Any RC Car chasis with controllable throttle (longitude) and steering (lateral) 
 
 There is a bunch options to start with. I recommend checking [nvidia's suggestions](https://github.com/NVIDIA-AI-IOT/jetracer#cars), [donkey car docs](http://docs.donkeycar.com/guide/build_hardware/) or [waveshare AI kit](https://www.waveshare.com/wiki/JetRacer_AI_Kit) which is used in this project.
 
-
 <img src="assets/assembly.gif">
 
+<img src="assets/front.jpg" width=238>
+
 ### Senors
-* Front facing wide-angle camera with 160° FOV
+* Front facing wide-angle camera with 200° FOV
 
 ### Brain
 * Jetson Nano by NVIDIA
@@ -38,13 +56,25 @@ There is a bunch options to start with. I recommend checking [nvidia's suggestio
 <br>
 <br>
 The main goal of this stage is to gather data reflecting correct driving, i.e images with correctly annotated steering and throttle values.
-While driving with gamepad, you can record camera frames and corresponding steering and throttle values. An example piece of data may look as follows:
+While driving with the gamepad, you can record camera frames and corresponding steering and throttle values. An example piece of data may look as follows:
 <br>
-<img src="assets/5178962045858.jpg">
+<img src="assets/200fov.png">
 <br>
-[0.3, 0.5]
+[0.1, 0.5]
 
-Where the first value is steering value and the second one is a throttle value. Both of them range from -1.0 to 1.0.
+Where the first value is a steering value and the second one is a throttle value. Both of them range from -1.0 to 1.0.
+
+Also, Jetson is capable of learning to stop when encountering the end of the road, for example when seeing the following cones:
+
+<img src="assets/stop.png">
+
+Or taking appropriate crossroads turns.
+<br>
+<img src="assets/crossroads_left.jpg">
+<img src="assets/crossroads_right.jpg">
+
+___
+
 
 I recommend collecting at least 20k of samples, but usually the more the merrier.
 
@@ -55,17 +85,44 @@ I recommend collecting at least 20k of samples, but usually the more the merrier
 <br>
 Training process consists of iterating over previously gathered datasets and feeding them into the CNN. I recommend offloading data from Jetson Nano and performing training on the GPU as the process might be heavy on the resources.
 
+CNN network is built of the resnet18 backbone and a stack of dropout and fully connected layers.
+
+    self.network = torchvision.models.resnet18(pretrained=pretrained)
+    self.network.fc = torch.nn.Sequential(
+        torch.nn.Dropout(p=DROPOUT_PROB),
+        torch.nn.Linear(in_features=self.network.fc.in_features, out_features=128),
+        torch.nn.Dropout(p=DROPOUT_PROB),
+        torch.nn.Linear(in_features=128, out_features=64),
+        torch.nn.Dropout(p=DROPOUT_PROB),
+        torch.nn.Linear(in_features=64, out_features=OUTPUT_SIZE)
+    )
+
 <img src="assets/training_progress.jpg">
 
 
 ### 3. Testing
-[Notebook](autopilot_testing.ipynb)
+[Python script](autopilot_testing.py)
 <br>
 <br>
-Finally, with the trained model we can test our jetson on the track. With relatively lightweight resnet18 CNN, jetson operates at ~30 FPS and successfully drives the track in both directions. 
+Finally, with the trained model we can test our jetson on the track. With the relatively lightweight CNN, jetson operates at ~30 FPS, successfully drives the track in both directions and correctly stops at the end of the road.
 
-<img src="assets/loop_ccw_small.gif" width=500>
-<img src="assets/loop_cw_small.gif" width=500>
+<img src="assets/topdown1.gif" width=500>
+<img src="assets/topdown2.gif" width=500>
+
+___
+
+And takes correct crossroads turns.
+<br>
+<img src="assets/crossroads_left.gif" width=500>
+<img src="assets/crossroads_right.gif" width=500>
+
+#### Performance Tips
+* make sure that your compute unit operates at max performance, for jetson nano run `sudo nvpmodel -m 0 && sudo jetson_clocks
+`
+* don't run the control loop from the jupyter notebook, use a python script to lower latency
+* limit the number of operations performed in the control loop
+* use [Tensor RT](https://developer.nvidia.com/tensorrt) for faster inference
+* set your model to FP16 or even INT8 if possible
 
 ## Author
 
