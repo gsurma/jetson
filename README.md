@@ -107,7 +107,7 @@ CNN network is built of the resnet18 backbone and a stack of dropout and fully c
 
 <img src="assets/training_progress.jpg">
 
-Finally, we can test the model against the test set before we proceed to the real-world testing.
+Finally, we can check the model against the test set before we proceed to the real-world testing.
 <br>
 <img src="assets/test_example.png" width=300>
 <br>
