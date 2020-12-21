@@ -8,6 +8,7 @@ Jetson is a self-driving toy car project. It contains an end-to-end CNN vision s
 
 Check the corresponding Medium articles:
 [Jetson - Self-Driving Toy Car (Part: 1)](https://towardsdatascience.com/jetson-self-driving-toy-car-part-1-4341c139c0f2)
+<br>
 [Jetson - Self-Driving Toy Car (Part: 2)](https://towardsdatascience.com/jetson-self-driving-toy-car-part-2-983044dbfb3e)
 
 
