@@ -15,19 +15,23 @@ Check the corresponding Medium article:
 <img src="assets/pov2.gif" width=224>
 <br>
 Path following
-
+<br>
+<br>
 <img src="assets/stopping.gif" width=224>
 <br>
 Stopping
-
+<br>
+<br>
 <img src="assets/crossroads_left.gif" width=224>
 <br>
 Crossroads left turn
-
+<br>
+<br>
 <img src="assets/crossroads_right.gif" width=224>
 <br>
 Crossroads right turn
-
+<br>
+<br>
 
 ## Hardware
 
