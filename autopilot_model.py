@@ -15,13 +15,7 @@ class AutopilotModel(torch.nn.Module):
         self.network = torchvision.models.resnet18(pretrained=pretrained)
         self.network.fc = torch.nn.Sequential(
             torch.nn.Dropout(p=DROPOUT_PROB),
-            torch.nn.Linear(in_features=self.network.fc.in_features, out_features=1024),
-            torch.nn.Dropout(p=DROPOUT_PROB),
-            torch.nn.Linear(in_features=1024, out_features=512),
-            torch.nn.Dropout(p=DROPOUT_PROB),
-            torch.nn.Linear(in_features=512, out_features=256),
-            torch.nn.Dropout(p=DROPOUT_PROB),
-            torch.nn.Linear(in_features=256, out_features=128),
+            torch.nn.Linear(in_features=self.network.fc.in_features, out_features=128),
             torch.nn.Dropout(p=DROPOUT_PROB),
             torch.nn.Linear(in_features=128, out_features=64),
             torch.nn.Dropout(p=DROPOUT_PROB),
