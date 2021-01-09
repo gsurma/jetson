@@ -6,7 +6,7 @@
 
 Jetson is a self-driving toy car project. It contains an end-to-end CNN vision system build in PyTorch.
 
-Check the corresponding Medium articles:
+Check the corresponding articles:
 <br>
 [Jetson - Self-Driving Toy Car (Part: 1) Car Assembly, System Design and Basic AI Autopilot Motion](https://medium.com/@gsurma/jetson-self-driving-toy-car-part-1-4341c139c0f2)
 <br>
